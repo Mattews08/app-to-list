@@ -4,16 +4,35 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Modal,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { colors } from "./Colors";
 import { tempData } from "./temData";
 import { TodoList } from "./components/TodoList";
+import { AddListModal } from "./components/AddListModal";
+import { useState } from "react";
 
 export default function App() {
+  const [addTodoVisible, setAddTodoVisible] = useState(false);
+
+  function toggleAddModal() {
+    if(!addTodoVisible) {
+      setAddTodoVisible(true)
+    } else {
+      setAddTodoVisible(false)
+    }
+  }
 
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        visible={addTodoVisible}
+        onRequestClose={() => toggleAddModal}
+      >
+        <AddListModal closeModal={() => toggleAddModal()} />
+      </Modal>
       <View style={{ flexDirection: "row" }}>
         <View style={styles.divider} />
         <Text style={styles.title}>
@@ -23,7 +42,10 @@ export default function App() {
         <View style={styles.divider} />
       </View>
       <View style={{ marginVertical: 48 }}>
-        <TouchableOpacity style={styles.addList}>
+        <TouchableOpacity
+          style={styles.addList}
+          onPress={() => toggleAddModal()}
+        >
           <AntDesign name="plus" size={16} color={colors.green} />
         </TouchableOpacity>
         <Text style={styles.add}>Add List</Text>
@@ -34,9 +56,7 @@ export default function App() {
           keyExtractor={(item) => item.name}
           horizontal={true}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-           <TodoList data={item} />
-          )}
+          renderItem={({ item }) => <TodoList data={item} />}
         />
       </View>
     </View>
